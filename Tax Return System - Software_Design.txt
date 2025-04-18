@@ -1,0 +1,106 @@
+
+# Software Design
+
+## Overview
+
+The software system is built using an object-oriented programming (OOP) approach, with a layered architecture to ensure separation of concerns. The program manages CPAs, clients, tax filing assistants, and tax returns efficiently, with a focus on scalability, maintainability, and user-friendliness.
+
+## Architecture
+
+1. **Database Layer**:
+   - Managed by `database.py` and `db_connection.py`.
+   - Handles all database operations, such as querying, inserting, updating, and deleting records.
+   - Connection pooling in `db_connection.py` optimizes database performance.
+
+2. **Model Layer**:
+   - Each table in the database corresponds to a Python class (CPA, Client, Tax Filing Assistant, and Tax Return).
+   - Encapsulates attributes and methods related to that entity, providing an abstraction over raw database operations.
+
+3. **Controller Layer**:
+   - The `main.py` file serves as the controller, providing the user interface and managing interactions between users and the system.
+
+4. **Error Handling**:
+   - Comprehensive error handling ensures system stability and user feedback for invalid operations.
+
+## Detailed Model Descriptions
+
+### CPA Model
+- **Attributes**:
+  - `cpa_id`: Unique identifier for each CPA.
+  - `name`: CPA's name.
+- **Methods**:
+  - `save`: Adds a new CPA record to the database.
+  - `get`: Fetches CPA details by ID.
+  - `update_name`: Updates the CPA's name in the database and the instance.
+  - `delete`: Deletes a CPA record and adjusts the database sequence.
+
+### Client Model
+- **Attributes**:
+  - `client_id`: Unique identifier for each client.
+  - `name`: Client's name.
+  - `address`: Client's address.
+  - `income`: Client's income.
+  - `tax_materials_submitted`: Boolean indicating material submission status.
+  - `cpa_id`: CPA assigned to the client.
+- **Methods**:
+  - `save`: Inserts a new client record into the database.
+  - `get`: Retrieves client details by ID.
+  - `update_field`: Updates a specific field for the client and syncs the instance.
+  - `delete`: Deletes the client record and adjusts the database sequence.
+
+### Tax Filing Assistant Model
+- **Attributes**:
+  - `assistant_id`: Unique identifier for each assistant.
+  - `name`: Assistant's name.
+- **Methods**:
+  - `save`: Adds a new assistant record to the database.
+  - `get`: Fetches assistant details by ID.
+  - `update_name`: Updates the assistant's name in the database and the instance.
+  - `delete`: Removes an assistant record and adjusts the database sequence.
+
+### Tax Return Model
+- **Attributes**:
+  - `return_id`: Unique identifier for each tax return.
+  - `client_id`: Associated client ID (unique constraint ensures one return per client).
+  - `status`: Filing status of the tax return.
+  - `filing_timestamp`: Timestamp of the filing.
+  - `checked_by_cpa`: Indicates CPA review status.
+  - `filed_by_assistant`: Indicates assistant filing status.
+- **Methods**:
+  - `save`: Inserts a new tax return record into the database.
+  - `get`: Fetches tax return details by client ID.
+  - `mark_filed`: Marks the tax return as filed and updates the timestamp.
+  - `mark_checked_by_cpa`: Marks the return as reviewed by a CPA.
+  - `mark_filed_by_assistant`: Marks the return as filed by an assistant.
+
+## Workflow
+
+1. **User Interaction**:
+   - Users interact with the menu-driven interface in `main.py`, selecting options to manage CPAs, clients, assistants, or tax returns.
+
+2. **Controller Actions**:
+   - Based on user input, the controller invokes methods in the model classes.
+
+3. **Model-Database Communication**:
+   - Model methods call database functions to perform the requested operations.
+
+4. **Error Feedback**:
+   - Invalid operations (e.g., duplicate tax return entries) are handled gracefully with meaningful error messages.
+
+## Design Rationale
+
+1. **Object-Oriented Design**:
+   - Encapsulating logic within classes improves modularity, readability, and maintainability.
+
+2. **Layered Architecture**:
+   - Separating database, model, and controller responsibilities ensures clean, scalable design.
+
+3. **Extensibility**:
+   - The design supports easy addition of new features or entities without disrupting existing functionality.
+
+4. **User-Friendly Interface**:
+   - The menu-driven interface simplifies system interaction for users.
+
+5. **Performance Optimization**:
+   - Connection pooling minimizes database overhead, ensuring fast and efficient operations.
+

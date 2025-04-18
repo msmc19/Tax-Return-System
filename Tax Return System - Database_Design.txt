@@ -1,0 +1,73 @@
+
+# Database Design
+
+## Overview
+
+The database design follows a normalized structure to minimize redundancy and ensure data integrity. Each table represents a distinct entity in the system, with well-defined relationships between entities. Primary keys ensure uniqueness, while foreign keys enforce referential integrity.
+
+## Tables and Relationships
+
+### 1. CPAs Table
+- **Primary Key**: `cpa_id` (SERIAL)
+- **Columns**:
+  - `cpa_id`: Auto-incremented unique identifier for each CPA.
+  - `name` (VARCHAR(100)): The name of the CPA.
+- **Purpose**:
+  - This table stores information about Certified Public Accountants.
+  - Used to associate CPAs with clients.
+
+### 2. Clients Table
+- **Primary Key**: `client_id` (SERIAL)
+- **Foreign Key**: `cpa_id` references `CPAs(cpa_id)`.
+- **Columns**:
+  - `client_id`: Auto-incremented unique identifier for each client.
+  - `name` (VARCHAR(100)): The client's full name.
+  - `address` (VARCHAR(255)): The client's address for correspondence.
+  - `income` (DECIMAL(10,2)): The client's annual income.
+  - `tax_materials_submitted` (BOOLEAN): Indicates whether the client has submitted their tax materials.
+  - `cpa_id` (INT): The ID of the CPA assigned to the client.
+- **Purpose**:
+  - Represents clients of the accounting firm.
+  - Links each client to a specific CPA for personalized tax preparation.
+
+### 3. TaxFilingAssistants Table
+- **Primary Key**: `assistant_id` (SERIAL)
+- **Columns**:
+  - `assistant_id`: Auto-incremented unique identifier for each assistant.
+  - `name` (VARCHAR(100)): The name of the assistant.
+- **Purpose**:
+  - Stores information about tax filing assistants involved in the preparation process.
+
+### 4. TaxReturns Table
+- **Primary Key**: `return_id` (SERIAL)
+- **Foreign Key**: `client_id` references `Clients(client_id)`.
+- **Columns**:
+  - `return_id`: Auto-incremented unique identifier for each tax return.
+  - `client_id` (INT UNIQUE): Client associated with the tax return (one return per client).
+  - `status` (BOOLEAN): Indicates whether the tax return has been filed.
+  - `filing_timestamp` (TIMESTAMP): Records the date and time of filing.
+  - `checked_by_cpa` (BOOLEAN): Indicates whether the tax return was reviewed by a CPA.
+  - `filed_by_assistant` (BOOLEAN): Indicates whether the return was filed by an assistant.
+- **Purpose**:
+  - Tracks the progress and details of tax returns for each client.
+  - Ensures compliance with the one-return-per-client rule via a UNIQUE constraint.
+
+## Design Decisions
+
+1. **Normalization**:
+   - Each table is focused on a specific entity, reducing redundancy and improving clarity.
+
+2. **Relationships**:
+   - Foreign keys establish logical links between related entities, such as associating clients with CPAs and tax returns with clients.
+
+3. **Constraints**:
+   - The UNIQUE constraint on `client_id` in the `TaxReturns` table enforces a one-to-one relationship between clients and tax returns.
+
+4. **Scalability**:
+   - Auto-incremented primary keys allow seamless addition of new records without manual ID management.
+
+5. **Data Integrity**:
+   - Referential integrity is maintained through foreign keys, ensuring valid relationships between entities.
+
+6. **Flexibility**:
+   - The schema supports future expansion, such as adding new attributes or tables for additional features.
